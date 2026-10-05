@@ -11,6 +11,8 @@ A one-page dashboard for a 30 day reset. Open `index.html`, or publish it with G
 | Weigh-ins | Optional daily weight, charted against the 88kg goal |
 | End-of-month goals | Get to 88kg · Get to 10k per month · Stop spending on the credit card · Stop vaping |
 
+The reset runs from **Tuesday 6 October to Wednesday 4 November 2026** (set by `start` in `CONFIG`).
+
 Week 5 is only Days 29–30, so its targets are scaled down (2 workouts, 1 run).
 
 ## Publish with GitHub Pages

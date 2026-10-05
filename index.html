@@ -342,9 +342,12 @@
    - weekly:  ticked on the day you do it, counted against a weekly target
    - goals:   end-of-month goals. `track` links a goal to a daily item so the
               goal shows how many days you've managed it.
+   - start:   Day 1 (YYYY-MM-DD). Changing the date box at the bottom of the
+              page overrides this in your browser.
    Changing a label is safe. Changing an `id` loses the ticks saved under it.
    ============================================================ */
 const CONFIG = {
+  start: '2026-10-06',
   days: 30,
   daily: [
     { id: 'steps',   label: '5–10k steps' },
@@ -381,9 +384,11 @@ const WEEKS = Math.ceil(N / 7);
 function load() {
   try {
     const s = JSON.parse(localStorage.getItem(KEY));
-    if (s && /^\d{4}-\d{2}-\d{2}$/.test(s.start)) return { log: {}, goals: {}, ...s };
+    if (s && /^\d{4}-\d{2}-\d{2}$/.test(s.start)) {
+      return { log: {}, goals: {}, ...s, start: s.startEdited ? s.start : CONFIG.start };
+    }
   } catch (e) {}
-  return { start: isoOf(new Date()), log: {}, goals: {} };
+  return { start: CONFIG.start, log: {}, goals: {} };
 }
 function save() {
   try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
@@ -663,7 +668,7 @@ document.addEventListener('keydown', ev => {
 });
 $('#start').addEventListener('change', ev => {
   if (!/^\d{4}-\d{2}-\d{2}$/.test(ev.target.value)) return;
-  state.start = ev.target.value; save(); sel = todayDay(); render();
+  state.start = ev.target.value; state.startEdited = true; save(); sel = todayDay(); render();
 });
 $('#export').addEventListener('click', () => {
   const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
@@ -687,7 +692,7 @@ $('#import-file').addEventListener('change', async ev => {
 });
 $('#reset').addEventListener('click', () => {
   if (!confirm('Clear every tick, weigh-in and goal? This cannot be undone (export a backup first if unsure).')) return;
-  state = { start: isoOf(new Date()), log: {}, goals: {} }; save(); sel = todayDay(); render();
+  state = { start: CONFIG.start, log: {}, goals: {} }; save(); sel = todayDay(); render();
 });
 // Roll over to the new day if the page is left open overnight.
 document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
