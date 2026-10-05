@@ -15,9 +15,9 @@ Week 5 is only Days 29–30, so its targets are scaled down (2 workouts, 1 run).
 
 ## Publish with GitHub Pages
 
-1. Merge this branch into `main`.
-2. Go to **Settings → Pages**. Under **Build and deployment**, pick **Deploy from a branch**, then choose `main` and `/ (root)`.
-3. The site appears at `https://<your-username>.github.io/30-day-reset/` after a minute or so.
+1. Optional: rename the default branch to `main` under **Settings → General → Default branch** (pencil icon).
+2. Go to **Settings → Pages**. Under **Build and deployment**, pick **Deploy from a branch**, then choose the default branch and `/ (root)`.
+3. The site appears at `https://kelsey-thryve.github.io/30-day-reset/` after a minute or so.
 
 ## Saving and devices
 
