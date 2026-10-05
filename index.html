@@ -1,0 +1,704 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>30 Day Reset</title>
+<meta name="description" content="Daily and weekly tracker for a 30 day reset.">
+<style>
+  :root {
+    color-scheme: light;
+    --page: #f3f2ee;
+    --surface: #fcfcfb;
+    --ink: #0b0b0b;
+    --ink-2: #52514e;
+    --muted: #6f6d68;
+    --hair: #e1e0d9;
+    --axis: #c3c2b7;
+    --border: rgba(11, 11, 11, 0.10);
+    --wash: rgba(11, 11, 11, 0.04);
+    --accent: #2a78d6;
+    --accent-soft: #cde2fb;
+    --good: #006300;
+    --good-mark: #0ca30c;
+    --lvl0: #ebeae4; --lvl0-ink: #52514e;
+    --lvl1: #b7d3f6; --lvl1-ink: #0b0b0b;
+    --lvl2: #5598e7; --lvl2-ink: #0b0b0b;
+    --lvl3: #1c5cab; --lvl3-ink: #ffffff;
+  }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      color-scheme: dark;
+      --page: #0d0d0d;
+      --surface: #1a1a19;
+      --ink: #ffffff;
+      --ink-2: #c3c2b7;
+      --muted: #9a988f;
+      --hair: #2c2c2a;
+      --axis: #383835;
+      --border: rgba(255, 255, 255, 0.10);
+      --wash: rgba(255, 255, 255, 0.05);
+      --accent: #3987e5;
+      --accent-soft: #1b3558;
+      --good: #0ca30c;
+      --good-mark: #0ca30c;
+      --lvl0: #262624; --lvl0-ink: #c3c2b7;
+      --lvl1: #184f95; --lvl1-ink: #ffffff;
+      --lvl2: #2a78d6; --lvl2-ink: #ffffff;
+      --lvl3: #86b6ef; --lvl3-ink: #0b0b0b;
+    }
+  }
+  :root[data-theme="dark"] {
+    color-scheme: dark;
+    --page: #0d0d0d;
+    --surface: #1a1a19;
+    --ink: #ffffff;
+    --ink-2: #c3c2b7;
+    --muted: #9a988f;
+    --hair: #2c2c2a;
+    --axis: #383835;
+    --border: rgba(255, 255, 255, 0.10);
+    --wash: rgba(255, 255, 255, 0.05);
+    --accent: #3987e5;
+    --accent-soft: #1b3558;
+    --good: #0ca30c;
+    --good-mark: #0ca30c;
+    --lvl0: #262624; --lvl0-ink: #c3c2b7;
+    --lvl1: #184f95; --lvl1-ink: #ffffff;
+    --lvl2: #2a78d6; --lvl2-ink: #ffffff;
+    --lvl3: #86b6ef; --lvl3-ink: #0b0b0b;
+  }
+
+  * { box-sizing: border-box; }
+  html { -webkit-text-size-adjust: 100%; }
+  body {
+    margin: 0;
+    background: var(--page);
+    color: var(--ink);
+    font: 15px/1.45 system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  }
+  button, input { font: inherit; color: inherit; }
+
+  .wrap { max-width: 1040px; margin: 0 auto; padding: 24px 16px 48px; }
+
+  /* Header */
+  .top { display: flex; flex-wrap: wrap; gap: 20px; align-items: flex-end; justify-content: space-between; margin-bottom: 20px; }
+  .eyebrow { margin: 0 0 4px; font-size: 13px; font-weight: 600; letter-spacing: .04em; text-transform: uppercase; color: var(--ink-2); }
+  h1 { margin: 0; font-size: 48px; line-height: 1.05; font-weight: 650; letter-spacing: -0.02em; }
+  h1 .of { font-size: 22px; font-weight: 500; color: var(--ink-2); letter-spacing: 0; }
+  .sub { margin: 6px 0 0; color: var(--ink-2); }
+  .tiles { display: flex; gap: 10px; flex-wrap: wrap; }
+  .tile { background: var(--surface); border: 1px solid var(--border); border-radius: 12px; padding: 10px 14px; min-width: 112px; }
+  .tile .label { font-size: 13px; color: var(--ink-2); }
+  .tile .value { font-size: 24px; font-weight: 600; line-height: 1.2; }
+  .tile .value small { font-size: 14px; font-weight: 500; color: var(--ink-2); }
+
+  .banner { background: var(--accent-soft); border-radius: 10px; padding: 10px 14px; margin: 0 0 16px; }
+
+  /* Cards */
+  .grid { display: grid; grid-template-columns: 1fr; gap: 16px; }
+  @media (min-width: 820px) {
+    .grid { grid-template-columns: 1fr 1fr; }
+    .span-2 { grid-column: span 2; }
+  }
+  .card { background: var(--surface); border: 1px solid var(--border); border-radius: 14px; padding: 18px; min-width: 0; }
+  .card h2 { margin: 0; font-size: 17px; font-weight: 600; }
+  .card-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; }
+  .card-head p { margin: 2px 0 0; color: var(--ink-2); font-size: 13px; }
+  .section-label { margin: 16px 0 6px; font-size: 13px; font-weight: 600; color: var(--ink-2); }
+
+  /* Day navigation */
+  .nav { display: flex; gap: 6px; }
+  .icon-btn {
+    width: 36px; height: 36px; border-radius: 10px; border: 1px solid var(--border);
+    background: transparent; cursor: pointer; font-size: 18px; line-height: 1;
+  }
+  .icon-btn:hover:not(:disabled) { background: var(--wash); }
+  .icon-btn:disabled { opacity: .35; cursor: default; }
+  .text-btn { border: 1px solid var(--border); background: transparent; border-radius: 10px; padding: 7px 12px; cursor: pointer; }
+  .text-btn:hover { background: var(--wash); }
+  .text-btn.danger { color: #d03b3b; }
+
+  /* Checklist */
+  .checks { list-style: none; margin: 0; padding: 0; }
+  .check {
+    display: flex; align-items: center; gap: 12px; padding: 9px 10px; margin: 0 -10px;
+    border-radius: 10px; cursor: pointer; user-select: none;
+  }
+  .check:hover { background: var(--wash); }
+  .check input { width: 22px; height: 22px; margin: 0; accent-color: var(--accent); flex: none; cursor: pointer; }
+  .check .text { flex: 1; min-width: 0; }
+  .check .hint { display: block; font-size: 12.5px; color: var(--muted); }
+  .check .meta { font-size: 13px; color: var(--ink-2); white-space: nowrap; font-variant-numeric: tabular-nums; }
+  .check input:checked + .text .name { color: var(--ink-2); }
+
+  .weight-row { display: flex; align-items: center; gap: 10px; margin-top: 4px; }
+  .weight-row input {
+    width: 110px; padding: 8px 10px; border-radius: 10px; border: 1px solid var(--axis); background: var(--surface);
+  }
+  .weight-row input:focus, .settings input:focus { outline: 2px solid var(--accent); outline-offset: 1px; }
+  .weight-row span { color: var(--ink-2); }
+
+  /* Meters */
+  .meter { height: 8px; border-radius: 4px; background: var(--accent-soft); overflow: hidden; }
+  .meter > div { height: 100%; background: var(--accent); border-radius: 4px; }
+  .meter.done > div { background: var(--good-mark); }
+
+  /* Weekly */
+  .target { margin-bottom: 14px; }
+  .target-top { display: flex; justify-content: space-between; align-items: baseline; margin-bottom: 6px; }
+  .target-top strong { font-weight: 600; }
+  .target-top span { color: var(--ink-2); font-variant-numeric: tabular-nums; }
+  .pips { display: flex; gap: 4px; }
+  .pip { flex: 1; height: 10px; border-radius: 4px; background: var(--lvl0); }
+  .pip.on { background: var(--accent); }
+  .pips.done .pip.on { background: var(--good-mark); }
+  .status { font-size: 13px; margin-top: 4px; color: var(--ink-2); }
+  .status.ok { color: var(--good); font-weight: 600; }
+
+  table { width: 100%; border-collapse: collapse; font-size: 14px; }
+  th, td { text-align: left; padding: 7px 6px; border-bottom: 1px solid var(--hair); }
+  th { font-weight: 600; color: var(--ink-2); font-size: 13px; }
+  td.num, th.num { text-align: right; font-variant-numeric: tabular-nums; }
+  tr.current td { background: var(--wash); font-weight: 600; }
+  td .tick { color: var(--good); font-weight: 700; }
+
+  /* 30-day grid */
+  .month { display: grid; grid-template-columns: 44px repeat(7, minmax(0, 1fr)); gap: 6px; align-items: stretch; }
+  .month .wk { font-size: 12px; color: var(--muted); display: flex; align-items: center; }
+  .month .dow { font-size: 12px; color: var(--muted); text-align: center; }
+  .cell {
+    position: relative; border: 0; border-radius: 8px; min-height: 52px; padding: 6px; cursor: pointer;
+    background: var(--lvl0); color: var(--lvl0-ink); text-align: left; display: flex; flex-direction: column; justify-content: space-between;
+  }
+  .cell .d { font-weight: 600; font-size: 14px; }
+  .cell .n { font-size: 11.5px; font-variant-numeric: tabular-nums; opacity: .9; }
+  .cell.l1 { background: var(--lvl1); color: var(--lvl1-ink); }
+  .cell.l2 { background: var(--lvl2); color: var(--lvl2-ink); }
+  .cell.l3 { background: var(--lvl3); color: var(--lvl3-ink); }
+  .cell.future { background: transparent; box-shadow: inset 0 0 0 1px var(--hair); color: var(--muted); }
+  .cell.today::after { content: ""; position: absolute; top: 7px; right: 7px; width: 7px; height: 7px; border-radius: 50%; background: currentColor; }
+  .cell.sel { outline: 2px solid var(--ink); outline-offset: 2px; }
+  .cell:focus-visible { outline: 2px solid var(--accent); outline-offset: 2px; }
+  .legend { display: flex; flex-wrap: wrap; gap: 14px; margin-top: 12px; font-size: 13px; color: var(--ink-2); }
+  .legend span { display: inline-flex; align-items: center; gap: 6px; }
+  .legend i { width: 14px; height: 14px; border-radius: 4px; display: inline-block; }
+  @media (max-width: 480px) {
+    .month { grid-template-columns: 30px repeat(7, minmax(0, 1fr)); gap: 4px; }
+    .cell { min-height: 44px; padding: 4px 5px; }
+    .cell .n { display: none; }
+    .cell.today::after { top: auto; bottom: 5px; right: 5px; width: 6px; height: 6px; }
+    h1 { font-size: 40px; }
+    .tiles { display: grid; grid-template-columns: repeat(3, 1fr); width: 100%; }
+    .tile { min-width: 0; padding: 10px; }
+  }
+
+  /* Weight chart */
+  .weight-stats { display: flex; gap: 18px; flex-wrap: wrap; margin-bottom: 10px; }
+  .weight-stats div { font-size: 13px; color: var(--ink-2); }
+  .weight-stats strong { display: block; font-size: 20px; font-weight: 600; color: var(--ink); }
+  .chart { position: relative; }
+  .chart svg { display: block; width: 100%; height: auto; overflow: visible; }
+  .chart .tip {
+    position: absolute; pointer-events: none; background: var(--surface); border: 1px solid var(--border);
+    border-radius: 8px; padding: 6px 9px; font-size: 13px; white-space: nowrap; box-shadow: 0 4px 14px rgba(0,0,0,.12);
+    transform: translate(-50%, calc(-100% - 12px)); display: none;
+  }
+  .chart .tip strong { font-weight: 600; }
+  .empty { color: var(--ink-2); font-size: 14px; padding: 18px 0; }
+  details { margin-top: 10px; font-size: 14px; }
+  summary { cursor: pointer; color: var(--ink-2); }
+
+  /* Goals */
+  .goal { padding: 10px 0; border-bottom: 1px solid var(--hair); }
+  .goal:last-child { border-bottom: 0; }
+  .goal .check { margin: 0 -10px; }
+  .goal .meter { margin: 4px 0 0 34px; }
+  .goal .status { margin-left: 34px; }
+
+  /* Settings */
+  .settings { display: flex; flex-wrap: wrap; gap: 12px 20px; align-items: center; justify-content: space-between; }
+  .settings label { display: flex; align-items: center; gap: 10px; color: var(--ink-2); }
+  .settings input[type=date] { padding: 7px 10px; border-radius: 10px; border: 1px solid var(--axis); background: var(--surface); }
+  .settings .actions { display: flex; gap: 8px; flex-wrap: wrap; }
+  .note { margin: 12px 0 0; font-size: 13px; color: var(--muted); }
+
+  .sr { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="top">
+    <div>
+      <p class="eyebrow">30 Day Reset</p>
+      <h1><span id="hero">Day 1</span> <span class="of">of 30</span></h1>
+      <p class="sub" id="range"></p>
+    </div>
+    <div class="tiles">
+      <div class="tile"><div class="label">Today</div><div class="value" id="t-today"></div></div>
+      <div class="tile"><div class="label">Streak</div><div class="value" id="t-streak"></div></div>
+      <div class="tile"><div class="label">Habits hit</div><div class="value" id="t-pct"></div></div>
+    </div>
+  </header>
+
+  <p class="banner" id="banner" hidden></p>
+
+  <main class="grid">
+    <section class="card" id="day-card" aria-labelledby="day-title">
+      <div class="card-head">
+        <div>
+          <h2 id="day-title">Day 1</h2>
+          <p id="day-date"></p>
+        </div>
+        <div class="nav">
+          <button class="icon-btn" id="prev" aria-label="Previous day">‹</button>
+          <button class="text-btn" id="go-today">Today</button>
+          <button class="icon-btn" id="next" aria-label="Next day">›</button>
+        </div>
+      </div>
+      <div class="section-label">Daily</div>
+      <ul class="checks" id="daily"></ul>
+      <div class="section-label">Training (counts toward the week)</div>
+      <ul class="checks" id="activities"></ul>
+      <div class="section-label">Weigh-in (optional)</div>
+      <div class="weight-row">
+        <label class="sr" for="weight">Weight in kg</label>
+        <input id="weight" type="number" inputmode="decimal" step="0.1" min="30" max="300" placeholder="e.g. 92.4">
+        <span>kg</span>
+      </div>
+    </section>
+
+    <section class="card" id="week-card" aria-labelledby="week-title">
+      <div class="card-head">
+        <div>
+          <h2 id="week-title">Week 1</h2>
+          <p id="week-range"></p>
+        </div>
+      </div>
+      <div id="targets"></div>
+      <div class="section-label">All weeks</div>
+      <table>
+        <thead id="weeks-head"></thead>
+        <tbody id="weeks"></tbody>
+      </table>
+    </section>
+
+    <section class="card span-2" aria-labelledby="month-title">
+      <div class="card-head">
+        <div>
+          <h2 id="month-title">30 days at a glance</h2>
+          <p>How many daily habits you ticked each day. Tap a day to open it.</p>
+        </div>
+      </div>
+      <div class="month" id="month"></div>
+      <div class="legend" id="legend"></div>
+    </section>
+
+    <section class="card" aria-labelledby="weight-title">
+      <div class="card-head">
+        <div>
+          <h2 id="weight-title">Weight</h2>
+          <p id="weight-sub"></p>
+        </div>
+      </div>
+      <div class="weight-stats" id="weight-stats"></div>
+      <div class="chart" id="chart"></div>
+      <details id="weight-table-wrap" hidden>
+        <summary>Show as table</summary>
+        <table><thead><tr><th>Day</th><th>Date</th><th class="num">kg</th></tr></thead><tbody id="weight-table"></tbody></table>
+      </details>
+    </section>
+
+    <section class="card" aria-labelledby="goals-title">
+      <div class="card-head">
+        <div>
+          <h2 id="goals-title">By the end of the month</h2>
+          <p>Tick these off when you've hit them.</p>
+        </div>
+      </div>
+      <div id="goals"></div>
+    </section>
+
+    <section class="card span-2" aria-labelledby="settings-title">
+      <h2 id="settings-title" class="sr">Settings</h2>
+      <div class="settings">
+        <label>Day 1 is <input type="date" id="start"></label>
+        <div class="actions">
+          <button class="text-btn" id="export">Export backup</button>
+          <button class="text-btn" id="import">Import backup</button>
+          <button class="text-btn danger" id="reset">Reset everything</button>
+          <input type="file" id="import-file" accept="application/json,.json" hidden>
+        </div>
+      </div>
+      <p class="note">Your ticks are saved in this browser only. To move them to another device, export a backup here and import it there.</p>
+    </section>
+  </main>
+</div>
+
+<script>
+/* ============================================================
+   EDIT YOUR RESET HERE
+   - daily:   ticked off every day
+   - weekly:  ticked on the day you do it, counted against a weekly target
+   - goals:   end-of-month goals. `track` links a goal to a daily item so the
+              goal shows how many days you've managed it.
+   Changing a label is safe. Changing an `id` loses the ticks saved under it.
+   ============================================================ */
+const CONFIG = {
+  days: 30,
+  daily: [
+    { id: 'steps',   label: '5–10k steps' },
+    { id: 'protein', label: '180g protein', hint: 'Diet → 88kg' },
+    { id: 'read',    label: 'Read 10 pages' },
+    { id: 'wake',    label: '6am wake-up' },
+    { id: 'novape',  label: 'No vaping today' },
+    { id: 'nocard',  label: 'No credit card spending today' },
+  ],
+  weekly: [
+    { id: 'workout', label: 'Workout', target: 4 },
+    { id: 'run',     label: 'Run',     target: 2 },
+  ],
+  weight: { target: 88, unit: 'kg' },
+  goals: [
+    { id: 'weight', label: 'Get to 88kg', auto: 'weight' },
+    { id: 'income', label: 'Get to 10k per month' },
+    { id: 'card',   label: 'Stop spending on the credit card', track: 'nocard' },
+    { id: 'vape',   label: 'Stop vaping', track: 'novape' },
+  ],
+};
+/* ============================================================ */
+
+const KEY = 'thirty-day-reset:v1';
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+const pad = n => String(n).padStart(2, '0');
+const isoOf = d => `${d.getFullYear()}-${pad(d.getMonth() + 1)}-${pad(d.getDate())}`;
+const parseISO = s => { const [y, m, d] = s.split('-').map(Number); return new Date(y, m - 1, d); };
+const fmt = (d, o) => d.toLocaleDateString(undefined, o);
+const N = CONFIG.days;
+const WEEKS = Math.ceil(N / 7);
+
+function load() {
+  try {
+    const s = JSON.parse(localStorage.getItem(KEY));
+    if (s && /^\d{4}-\d{2}-\d{2}$/.test(s.start)) return { log: {}, goals: {}, ...s };
+  } catch (e) {}
+  return { start: isoOf(new Date()), log: {}, goals: {} };
+}
+function save() {
+  try { localStorage.setItem(KEY, JSON.stringify(state)); } catch (e) {}
+}
+
+let state = load();
+save();
+
+const dateOf = n => { const d = parseISO(state.start); d.setDate(d.getDate() + n - 1); return d; };
+const rawToday = () => Math.round((parseISO(isoOf(new Date())) - parseISO(state.start)) / 864e5) + 1;
+const clampDay = n => Math.min(N, Math.max(1, n));
+const todayDay = () => clampDay(rawToday());
+const entry = n => state.log[n] || {};
+const setEntry = (n, key, val) => {
+  const e = state.log[n] || (state.log[n] = {});
+  if (val === false || val === null || val === '') delete e[key]; else e[key] = val;
+  if (!Object.keys(e).length) delete state.log[n];
+  save();
+};
+const dailyDone = n => CONFIG.daily.filter(i => entry(n)[i.id]).length;
+const weekDays = w => { const a = []; for (let n = w * 7 - 6; n <= Math.min(w * 7, N); n++) a.push(n); return a; };
+const weekOf = n => Math.ceil(n / 7);
+// A short final week (days 29–30) gets a proportionally smaller target.
+const weekTarget = (item, w) => Math.ceil(item.target * weekDays(w).length / 7);
+const weekCount = (item, w) => weekDays(w).filter(n => entry(n)[item.id]).length;
+const weights = () => {
+  const out = [];
+  for (let n = 1; n <= N; n++) { const w = entry(n).weight; if (typeof w === 'number') out.push({ day: n, w }); }
+  return out;
+};
+
+let sel = todayDay();
+
+function streak() {
+  const raw = rawToday();
+  if (raw < 1) return 0;
+  let n = clampDay(raw);
+  const total = CONFIG.daily.length;
+  if (raw <= N && dailyDone(n) < total) n--; // today isn't over yet
+  let s = 0;
+  while (n >= 1 && dailyDone(n) === total) { s++; n--; }
+  return s;
+}
+
+function renderHeader() {
+  const raw = rawToday();
+  const t = todayDay();
+  $('#hero').textContent = `Day ${raw < 1 ? 0 : t}`;
+  $('#range').textContent = `${fmt(dateOf(1), { weekday: 'short', day: 'numeric', month: 'short' })} – ${fmt(dateOf(N), { weekday: 'short', day: 'numeric', month: 'short', year: 'numeric' })}`;
+  const banner = $('#banner');
+  if (raw < 1) { banner.hidden = false; banner.textContent = `Your reset starts ${fmt(dateOf(1), { weekday: 'long', day: 'numeric', month: 'long' })}. You can look around until then.`; }
+  else if (raw > N) { banner.hidden = false; banner.textContent = 'All 30 days done. Check off your end-of-month goals below.'; }
+  else banner.hidden = true;
+
+  const total = CONFIG.daily.length;
+  $('#t-today').innerHTML = raw >= 1 && raw <= N ? `${dailyDone(t)}<small>/${total}</small>` : '–';
+  const s = streak();
+  $('#t-streak').innerHTML = `${s}<small> day${s === 1 ? '' : 's'}</small>`;
+  const elapsed = raw < 1 ? 0 : t;
+  let done = 0;
+  for (let n = 1; n <= elapsed; n++) done += dailyDone(n);
+  $('#t-pct').innerHTML = elapsed ? `${Math.round(done / (elapsed * total) * 100)}<small>%</small>` : '–';
+}
+
+function checkRow(kind, item, checked, meta) {
+  return `<li><label class="check">
+    <input type="checkbox" data-kind="${kind}" data-id="${esc(item.id)}" ${checked ? 'checked' : ''}>
+    <span class="text"><span class="name">${esc(item.label)}</span>${item.hint ? `<span class="hint">${esc(item.hint)}</span>` : ''}</span>
+    ${meta ? `<span class="meta">${meta}</span>` : ''}
+  </label></li>`;
+}
+
+function renderDay() {
+  const e = entry(sel);
+  const isToday = sel === rawToday();
+  $('#day-title').textContent = `Day ${sel}`;
+  $('#day-date').textContent = fmt(dateOf(sel), { weekday: 'long', day: 'numeric', month: 'long' }) + (isToday ? ' · Today' : '');
+  $('#prev').disabled = sel === 1;
+  $('#next').disabled = sel === N;
+  $('#daily').innerHTML = CONFIG.daily.map(i => checkRow('daily', i, e[i.id])).join('');
+  const w = weekOf(sel);
+  $('#activities').innerHTML = CONFIG.weekly.map(i =>
+    checkRow('daily', { ...i, label: `${i.label} done` }, e[i.id], `${weekCount(i, w)}/${weekTarget(i, w)} this week`)
+  ).join('');
+  const input = $('#weight');
+  if (document.activeElement !== input) input.value = typeof e.weight === 'number' ? e.weight : '';
+}
+
+function renderWeek() {
+  const w = weekOf(sel);
+  const days = weekDays(w);
+  $('#week-title').textContent = `Week ${w}`;
+  const short = days.length < 7 ? ' · short week, targets scaled' : '';
+  $('#week-range').textContent = `Days ${days[0]}–${days[days.length - 1]} · ${fmt(dateOf(days[0]), { day: 'numeric', month: 'short' })} – ${fmt(dateOf(days[days.length - 1]), { day: 'numeric', month: 'short' })}${short}`;
+
+  $('#targets').innerHTML = CONFIG.weekly.map(i => {
+    const c = weekCount(i, w), t = weekTarget(i, w), hit = c >= t;
+    const pips = Array.from({ length: Math.max(t, c) }, (_, k) => `<div class="pip ${k < c ? 'on' : ''}"></div>`).join('');
+    return `<div class="target">
+      <div class="target-top"><strong>${esc(i.label)}s</strong><span>${c} of ${t}</span></div>
+      <div class="pips ${hit ? 'done' : ''}" role="img" aria-label="${c} of ${t} ${esc(i.label.toLowerCase())}s">${pips}</div>
+      <div class="status ${hit ? 'ok' : ''}">${hit ? '✓ Target hit' : `${t - c} to go`}</div>
+    </div>`;
+  }).join('');
+
+  $('#weeks-head').innerHTML = `<tr><th>Week</th>${CONFIG.weekly.map(i => `<th class="num">${esc(i.label)}s</th>`).join('')}<th class="num">Daily habits</th></tr>`;
+  const total = CONFIG.daily.length;
+  let rows = '';
+  for (let k = 1; k <= WEEKS; k++) {
+    const ds = weekDays(k);
+    const pct = Math.round(ds.reduce((a, n) => a + dailyDone(n), 0) / (ds.length * total) * 100);
+    rows += `<tr class="${k === w ? 'current' : ''}"><td>${k}</td>${CONFIG.weekly.map(i => {
+      const c = weekCount(i, k), t = weekTarget(i, k);
+      return `<td class="num">${c >= t ? '<span class="tick" aria-hidden="true">✓</span> ' : ''}${c}/${t}</td>`;
+    }).join('')}<td class="num">${pct}%</td></tr>`;
+  }
+  $('#weeks').innerHTML = rows;
+}
+
+function renderMonth() {
+  const total = CONFIG.daily.length;
+  const raw = rawToday();
+  let html = '<div></div>';
+  for (let k = 0; k < 7; k++) html += `<div class="dow">${fmt(dateOf(k + 1), { weekday: 'short' })}</div>`;
+  for (let w = 1; w <= WEEKS; w++) {
+    html += `<div class="wk">Wk ${w}</div>`;
+    for (const n of weekDays(w)) {
+      const d = dailyDone(n);
+      const lvl = d === 0 ? 0 : d === total ? 3 : d / total >= 0.5 ? 2 : 1;
+      const future = n > raw && d === 0;
+      const cls = ['cell', future ? 'future' : `l${lvl}`, n === raw ? 'today' : '', n === sel ? 'sel' : ''].join(' ');
+      const label = `Day ${n}, ${fmt(dateOf(n), { weekday: 'long', day: 'numeric', month: 'long' })}: ${d} of ${total} daily habits`;
+      html += `<button class="${cls}" data-day="${n}" title="${esc(label)}" aria-label="${esc(label)}" aria-pressed="${n === sel}">
+        <span class="d">${n}</span><span class="n">${future ? fmt(dateOf(n), { day: 'numeric', month: 'short' }) : `${d}/${total}`}</span>
+      </button>`;
+    }
+  }
+  $('#month').innerHTML = html;
+  $('#legend').innerHTML = [
+    ['var(--lvl0)', 'None'], ['var(--lvl1)', 'Under half'], ['var(--lvl2)', 'Half or more'], ['var(--lvl3)', `All ${total}`],
+  ].map(([c, l]) => `<span><i style="background:${c}"></i>${l}</span>`).join('') + '<span>● Today</span>';
+}
+
+function renderWeight() {
+  const pts = weights();
+  const goal = CONFIG.weight.target, unit = CONFIG.weight.unit;
+  $('#weight-sub').textContent = `Goal: ${goal}${unit}`;
+  const chart = $('#chart');
+  $('#weight-table-wrap').hidden = !pts.length;
+  if (!pts.length) {
+    $('#weight-stats').innerHTML = '';
+    chart.innerHTML = '<p class="empty">Log a weigh-in on any day to start your trend line.</p>';
+    return;
+  }
+  const first = pts[0], last = pts[pts.length - 1];
+  const toGo = Math.max(0, last.w - goal);
+  const change = last.w - first.w;
+  $('#weight-stats').innerHTML = `
+    <div>Start<strong>${first.w.toFixed(1)}</strong></div>
+    <div>Latest<strong>${last.w.toFixed(1)}</strong></div>
+    <div>Change<strong>${change > 0 ? '+' : change < 0 ? '−' : ''}${Math.abs(change).toFixed(1)}</strong></div>
+    <div>To go<strong>${toGo ? toGo.toFixed(1) : '✓ 0'}</strong></div>`;
+
+  const W = Math.max(300, Math.round(chart.clientWidth || 560)), H = 220, pl = 34, pr = 70, pt = 12, pb = 26;
+  const vals = pts.map(p => p.w).concat(goal);
+  let lo = Math.floor(Math.min(...vals) - 0.5), hi = Math.ceil(Math.max(...vals) + 0.5);
+  const span = hi - lo;
+  const step = span <= 5 ? 1 : span <= 10 ? 2 : span <= 25 ? 5 : 10;
+  lo = Math.floor(lo / step) * step; hi = Math.ceil(hi / step) * step;
+  const x = d => pl + (d - 1) / (N - 1) * (W - pl - pr);
+  const y = v => pt + (hi - v) / (hi - lo) * (H - pt - pb);
+
+  let g = '';
+  for (let v = lo; v <= hi + 1e-9; v += step) {
+    g += `<line x1="${pl}" x2="${W - pr}" y1="${y(v)}" y2="${y(v)}" stroke="var(--hair)" stroke-width="1"/>`;
+    g += `<text x="${pl - 8}" y="${y(v) + 4}" text-anchor="end" font-size="11" fill="var(--muted)" style="font-variant-numeric:tabular-nums">${v}</text>`;
+  }
+  for (const d of W < 420 ? [1, 15, 29] : [1, 8, 15, 22, 29]) {
+    g += `<text x="${x(d)}" y="${H - 6}" text-anchor="middle" font-size="11" fill="var(--muted)">Day ${d}</text>`;
+  }
+  g += `<line x1="${pl}" x2="${W - pr}" y1="${H - pb}" y2="${H - pb}" stroke="var(--axis)" stroke-width="1"/>`;
+  g += `<line x1="${pl}" x2="${W - pr}" y1="${y(goal)}" y2="${y(goal)}" stroke="var(--good-mark)" stroke-width="1.5"/>`;
+  g += `<text x="${W - pr + 8}" y="${y(goal) + 4}" font-size="12" fill="var(--ink-2)">Goal ${goal}</text>`;
+  const path = pts.map((p, k) => `${k ? 'L' : 'M'}${x(p.day).toFixed(1)},${y(p.w).toFixed(1)}`).join('');
+  g += `<path d="${path}" fill="none" stroke="var(--accent)" stroke-width="2" stroke-linejoin="round" stroke-linecap="round"/>`;
+  g += pts.map(p => `<circle cx="${x(p.day)}" cy="${y(p.w)}" r="4" fill="var(--accent)" stroke="var(--surface)" stroke-width="2"/>`).join('');
+  const ly = Math.abs(y(last.w) - y(goal)) < 14 ? y(last.w) + (last.w > goal ? -10 : 14) : y(last.w) + 4;
+  g += `<text x="${x(last.day) + 9}" y="${ly}" font-size="12" font-weight="600" fill="var(--ink)">${last.w.toFixed(1)}</text>`;
+  g += `<line id="xh" x1="0" x2="0" y1="${pt}" y2="${H - pb}" stroke="var(--axis)" stroke-width="1" visibility="hidden"/>`;
+  g += `<rect id="hit" x="${pl}" y="0" width="${W - pl - pr}" height="${H}" fill="transparent"/>`;
+
+  chart.innerHTML = `<svg viewBox="0 0 ${W} ${H}" role="img" aria-label="Weight by day, latest ${last.w.toFixed(1)}${unit}, goal ${goal}${unit}">${g}</svg><div class="tip" id="tip"></div>`;
+
+  const svg = chart.querySelector('svg'), tip = $('#tip'), xh = $('#xh');
+  const move = ev => {
+    const r = svg.getBoundingClientRect();
+    const sx = (ev.clientX - r.left) / r.width * W;
+    let best = pts[0];
+    for (const p of pts) if (Math.abs(x(p.day) - sx) < Math.abs(x(best.day) - sx)) best = p;
+    xh.setAttribute('x1', x(best.day)); xh.setAttribute('x2', x(best.day)); xh.setAttribute('visibility', 'visible');
+    tip.style.display = 'block';
+    tip.style.left = `${x(best.day) / W * r.width}px`;
+    tip.style.top = `${y(best.w) / H * r.height}px`;
+    tip.innerHTML = `Day ${best.day} · ${fmt(dateOf(best.day), { day: 'numeric', month: 'short' })}<br><strong>${best.w.toFixed(1)} ${unit}</strong>`;
+  };
+  const hide = () => { tip.style.display = 'none'; xh.setAttribute('visibility', 'hidden'); };
+  $('#hit').addEventListener('pointermove', move);
+  $('#hit').addEventListener('pointerdown', move);
+  $('#hit').addEventListener('pointerleave', hide);
+
+  $('#weight-table').innerHTML = pts.map(p =>
+    `<tr><td>${p.day}</td><td>${fmt(dateOf(p.day), { weekday: 'short', day: 'numeric', month: 'short' })}</td><td class="num">${p.w.toFixed(1)}</td></tr>`
+  ).join('');
+}
+
+function renderGoals() {
+  const pts = weights();
+  const raw = rawToday();
+  const elapsed = raw < 1 ? 0 : clampDay(raw);
+  $('#goals').innerHTML = CONFIG.goals.map(g => {
+    let checked = !!state.goals[g.id], extra = '';
+    if (g.auto === 'weight') {
+      const goal = CONFIG.weight.target;
+      if (pts.length) {
+        const first = pts[0].w, last = pts[pts.length - 1].w;
+        const reached = last <= goal;
+        checked = checked || reached;
+        const pct = reached ? 100 : first > goal ? Math.max(0, Math.min(100, (first - last) / (first - goal) * 100)) : 0;
+        extra = `<div class="meter ${reached ? 'done' : ''}"><div style="width:${pct}%"></div></div>
+          <div class="status ${reached ? 'ok' : ''}">${reached ? '✓ Reached' : `${last.toFixed(1)}${CONFIG.weight.unit} now · ${(last - goal).toFixed(1)} to go`}</div>`;
+      } else {
+        extra = '<div class="status">Log a weigh-in to track this.</div>';
+      }
+    } else if (g.track) {
+      const item = CONFIG.daily.find(i => i.id === g.track);
+      let c = 0;
+      for (let n = 1; n <= N; n++) if (entry(n)[g.track]) c++;
+      extra = `<div class="meter"><div style="width:${elapsed ? c / elapsed * 100 : 0}%"></div></div>
+        <div class="status">${item ? esc(item.label.replace(/ today$/i, '')) : ''}: ${c} of ${elapsed} days so far</div>`;
+    }
+    return `<div class="goal"><ul class="checks">${checkRow('goal', g, checked)}</ul>${extra}</div>`;
+  }).join('');
+}
+
+function render() {
+  renderHeader(); renderDay(); renderWeek(); renderMonth(); renderWeight(); renderGoals();
+  $('#start').value = state.start;
+}
+
+// Events
+document.addEventListener('change', ev => {
+  const t = ev.target;
+  if (t.matches('input[type=checkbox][data-kind="daily"]')) { setEntry(sel, t.dataset.id, t.checked); render(); }
+  else if (t.matches('input[type=checkbox][data-kind="goal"]')) {
+    if (t.checked) state.goals[t.dataset.id] = true; else delete state.goals[t.dataset.id];
+    save(); render();
+  }
+});
+$('#weight').addEventListener('change', ev => {
+  const v = parseFloat(ev.target.value);
+  setEntry(sel, 'weight', Number.isFinite(v) ? Math.round(v * 10) / 10 : null);
+  render();
+});
+$('#prev').addEventListener('click', () => { sel = clampDay(sel - 1); render(); });
+$('#next').addEventListener('click', () => { sel = clampDay(sel + 1); render(); });
+$('#go-today').addEventListener('click', () => { sel = todayDay(); render(); });
+$('#month').addEventListener('click', ev => {
+  const b = ev.target.closest('[data-day]');
+  if (!b) return;
+  sel = +b.dataset.day; render();
+  if (window.innerWidth < 820) $('#day-card').scrollIntoView({ behavior: 'smooth', block: 'start' });
+});
+document.addEventListener('keydown', ev => {
+  if (ev.target.matches('input')) return;
+  if (ev.key === 'ArrowLeft' && sel > 1) { sel--; render(); }
+  if (ev.key === 'ArrowRight' && sel < N) { sel++; render(); }
+});
+$('#start').addEventListener('change', ev => {
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(ev.target.value)) return;
+  state.start = ev.target.value; save(); sel = todayDay(); render();
+});
+$('#export').addEventListener('click', () => {
+  const blob = new Blob([JSON.stringify(state, null, 2)], { type: 'application/json' });
+  const a = document.createElement('a');
+  a.href = URL.createObjectURL(blob);
+  a.download = `30-day-reset-${isoOf(new Date())}.json`;
+  a.click();
+  setTimeout(() => URL.revokeObjectURL(a.href), 1000);
+});
+$('#import').addEventListener('click', () => $('#import-file').click());
+$('#import-file').addEventListener('change', async ev => {
+  const f = ev.target.files[0];
+  if (!f) return;
+  try {
+    const s = JSON.parse(await f.text());
+    if (!s || !/^\d{4}-\d{2}-\d{2}$/.test(s.start)) throw new Error('bad file');
+    if (!confirm('Replace everything in this browser with the backup?')) return;
+    state = { log: {}, goals: {}, ...s }; save(); sel = todayDay(); render();
+  } catch (e) { alert("That file doesn't look like a 30 Day Reset backup."); }
+  ev.target.value = '';
+});
+$('#reset').addEventListener('click', () => {
+  if (!confirm('Clear every tick, weigh-in and goal? This cannot be undone (export a backup first if unsure).')) return;
+  state = { start: isoOf(new Date()), log: {}, goals: {} }; save(); sel = todayDay(); render();
+});
+// Roll over to the new day if the page is left open overnight.
+document.addEventListener('visibilitychange', () => { if (!document.hidden) render(); });
+// Redraw the chart at its real width so text stays readable on phones.
+let lastWidth = 0;
+new ResizeObserver(([e]) => {
+  const w = Math.round(e.contentRect.width);
+  if (w && Math.abs(w - lastWidth) > 4) { lastWidth = w; renderWeight(); }
+}).observe($('#chart'));
+
+render();
+</script>
+</body>
+</html>
