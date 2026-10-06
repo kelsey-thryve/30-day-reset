@@ -6,7 +6,7 @@ A one-page dashboard for a 30 day reset. Open `index.html`, or publish it with G
 
 | Type | Items |
 |---|---|
-| Daily ticks | 5–10k steps · 180g protein · Read 10 pages · 6am wake-up · No vaping · No credit card spending |
+| Daily ticks | 5–10k steps · 180g protein · Creatine · Read 10 pages · 6am wake-up · No vaping · No credit card spending |
 | Weekly targets | Workouts (4/week) · Runs (2/week). Tick them on the day you do them. |
 | Weigh-ins | Optional daily weight, charted against the 88kg goal |
 | End-of-month goals | Get to 88kg · Get to 10k per month · Stop spending on the credit card · Stop vaping |
